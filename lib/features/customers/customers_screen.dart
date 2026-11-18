@@ -87,7 +87,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
           // Search Header
           Container(
             color: Colors.white,
-            padding: const EdgeInsets.fromARGB(255, 16, 16, 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: TextField(
               controller: searchController,
               onChanged: (v) {
