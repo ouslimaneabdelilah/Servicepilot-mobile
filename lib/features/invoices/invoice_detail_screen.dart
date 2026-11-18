@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../../core/api_client.dart';
-import '../../core/widgets/app_dropdown.dart';
 import '../../core/widgets/app_loading_button.dart';
 
 class InvoiceDetailScreen extends StatefulWidget {

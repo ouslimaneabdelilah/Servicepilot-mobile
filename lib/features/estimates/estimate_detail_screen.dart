@@ -94,7 +94,7 @@ class _EstimateDetailScreenState extends State<EstimateDetailScreen> {
     if (ok == true && nameController.text.trim().isNotEmpty) {
       setState(() => actionLoading = true);
       try {
-        final res = await ApiClient.instance.dio.post('/estimates/${widget.estimateId}/approve', data: {
+        await ApiClient.instance.dio.post('/estimates/${widget.estimateId}/approve', data: {
           'approved_by_name': nameController.text.trim(),
         });
         if (mounted) {

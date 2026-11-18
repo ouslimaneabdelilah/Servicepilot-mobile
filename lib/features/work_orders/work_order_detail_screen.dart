@@ -176,7 +176,6 @@ class _WorkOrderDetailScreenState extends State<WorkOrderDetailScreen> {
     final req = workOrder!['service_request'] ?? {};
     final customer = req['customer'] ?? {};
     final checklists = workOrder!['checklists'] as List<dynamic>? ?? [];
-    final items = workOrder!['items'] as List<dynamic>? ?? [];
     final notes = workOrder!['completion_notes'] ?? '';
 
     return Scaffold(
@@ -344,6 +343,40 @@ class _WorkOrderDetailScreenState extends State<WorkOrderDetailScreen> {
                   Text(notes, style: const TextStyle(fontSize: 14, color: Color(0xFF334155))),
                 ],
               ),
+            ),
+          ],
+
+          if (status == 'completed') ...[
+            const SizedBox(height: 20),
+            AppLoadingButton(
+              onPressed: () async {
+                final messenger = ScaffoldMessenger.of(context);
+                final router = GoRouter.of(context);
+                setState(() => actionLoading = true);
+                try {
+                  final r = await ApiClient.instance.dio.post('/invoices', data: {
+                    'work_order_id': widget.workOrderId,
+                  });
+                  if (!mounted) return;
+                  final invId = r.data['data']['id'];
+                  messenger.showSnackBar(
+                    const SnackBar(content: Text('Client invoice generated!')),
+                  );
+                  router.push('/invoices/$invId');
+                } catch (e) {
+                  if (mounted) {
+                    messenger.showSnackBar(
+                      const SnackBar(content: Text('Could not generate invoice.')),
+                    );
+                  }
+                } finally {
+                  if (mounted) setState(() => actionLoading = false);
+                }
+              },
+              loading: actionLoading,
+              label: 'Generate Client Invoice',
+              icon: Icons.receipt_long_rounded,
+              backgroundColor: const Color(0xFF16A34A),
             ),
           ],
         ],

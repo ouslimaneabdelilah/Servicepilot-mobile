@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/api_client.dart';
 import '../../core/widgets/app_dropdown.dart';
+import '../../core/widgets/app_header.dart';
 import '../../core/widgets/app_loading_button.dart';
 import '../../core/widgets/app_text_field.dart';
 
@@ -101,10 +102,10 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        title: const Text('New Service Request', style: TextStyle(fontWeight: FontWeight.w800)),
-        backgroundColor: Colors.white,
-        elevation: 0,
+      appBar: const AppHeader(
+        title: 'New Service Request',
+        subtitle: 'Log incoming repair call & dispatch',
+        showBack: true,
       ),
       bottomNavigationBar: Container(
         color: Colors.white,

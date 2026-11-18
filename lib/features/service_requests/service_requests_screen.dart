@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/api_client.dart';
 import '../../core/widgets/app_empty_state.dart';
+import '../../core/widgets/app_header.dart';
 
 class ServiceRequestsScreen extends StatefulWidget {
   const ServiceRequestsScreen({super.key});
@@ -70,13 +71,13 @@ class _ServiceRequestsScreenState extends State<ServiceRequestsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        title: const Text('Service Requests', style: TextStyle(fontWeight: FontWeight.w800)),
-        backgroundColor: Colors.white,
-        elevation: 0,
+      appBar: AppHeader(
+        title: 'Service Requests',
+        subtitle: 'Customer calls & triage',
+        showBack: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh_rounded),
             onPressed: () => load(status: selectedStatus),
           ),
         ],
@@ -230,6 +231,33 @@ class _ServiceRequestsScreenState extends State<ServiceRequestsScreen> {
                                           ],
                                         ),
                                       ],
+                                      const SizedBox(height: 12),
+                                      const Divider(height: 1),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          OutlinedButton.icon(
+                                            icon: const Icon(Icons.note_add_outlined, size: 14),
+                                            label: const Text('Create Estimate', style: TextStyle(fontSize: 12)),
+                                            style: OutlinedButton.styleFrom(
+                                              minimumSize: const Size(0, 32),
+                                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                                            ),
+                                            onPressed: () => context.push('/estimates/new'),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          FilledButton.icon(
+                                            icon: const Icon(Icons.calendar_month_outlined, size: 14),
+                                            label: const Text('Dispatch', style: TextStyle(fontSize: 12)),
+                                            style: FilledButton.styleFrom(
+                                              minimumSize: const Size(0, 32),
+                                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                                            ),
+                                            onPressed: () => context.go('/schedule'),
+                                          ),
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 );
