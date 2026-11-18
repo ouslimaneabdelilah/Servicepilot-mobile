@@ -9,13 +9,25 @@ class AuthState {
   final bool loading;
   final String? error;
   final Map<String, String> fieldErrors;
+  final Map<String, dynamic>? user;
+  final Map<String, dynamic>? currentCompany;
+  final List<Map<String, dynamic>> companies;
+  final String role;
 
   const AuthState({
     this.loggedIn = false,
     this.loading = false,
     this.error,
     this.fieldErrors = const {},
+    this.user,
+    this.currentCompany,
+    this.companies = const [],
+    this.role = 'owner',
   });
+
+  bool get isOwner => role == 'owner';
+  bool get isDispatcher => role == 'dispatcher' || role == 'owner';
+  bool get isTechnician => role == 'technician';
 
   AuthState copy({
     bool? loggedIn,
@@ -23,24 +35,52 @@ class AuthState {
     String? error,
     bool clearError = false,
     Map<String, String>? fieldErrors,
+    Map<String, dynamic>? user,
+    Map<String, dynamic>? currentCompany,
+    List<Map<String, dynamic>>? companies,
+    String? role,
   }) {
     return AuthState(
       loggedIn: loggedIn ?? this.loggedIn,
       loading: loading ?? this.loading,
       error: clearError ? null : (error ?? this.error),
       fieldErrors: clearError ? const {} : (fieldErrors ?? this.fieldErrors),
+      user: user ?? this.user,
+      currentCompany: currentCompany ?? this.currentCompany,
+      companies: companies ?? this.companies,
+      role: role ?? this.role,
     );
   }
 }
 
 class AuthController extends Notifier<AuthState> {
   @override
-  AuthState build() => const AuthState();
+  AuthState build() {
+    _restoreSession();
+    return const AuthState();
+  }
+
+  Future<void> _restoreSession() async {
+    final token = await ApiClient.instance.getToken();
+    if (token != null && token.isNotEmpty) {
+      await loadCurrentUser();
+    }
+  }
 
   void clearError() {
     if (state.error != null || state.fieldErrors.isNotEmpty) {
       state = state.copy(clearError: true);
     }
+  }
+
+  Future<void> loadCurrentUser() async {
+    try {
+      final r = await ApiClient.instance.dio.get('/auth/me');
+      final userData = _extractUserData(r.data);
+      if (userData != null) {
+        _applyUserData(userData);
+      }
+    } catch (_) {}
   }
 
   Future<void> login(String email, String password) async {
@@ -58,7 +98,13 @@ class AuthController extends Notifier<AuthState> {
       }
 
       await ApiClient.instance.saveToken(token);
-      state = state.copy(loggedIn: true, loading: false, clearError: true);
+
+      final userData = _extractUserData(r.data);
+      if (userData != null) {
+        _applyUserData(userData);
+      } else {
+        state = state.copy(loggedIn: true, loading: false, clearError: true);
+      }
     } catch (e) {
       final parsed = _parseError(e, 'Incorrect email or password. Please try again.');
       state = state.copy(
@@ -101,7 +147,13 @@ class AuthController extends Notifier<AuthState> {
       }
 
       await ApiClient.instance.saveToken(token);
-      state = state.copy(loggedIn: true, loading: false, clearError: true);
+
+      final userData = _extractUserData(r.data);
+      if (userData != null) {
+        _applyUserData(userData);
+      } else {
+        state = state.copy(loggedIn: true, loading: false, clearError: true);
+      }
     } catch (e) {
       final parsed = _parseError(e, 'Registration failed. Please check the form fields.');
       state = state.copy(
@@ -112,12 +164,80 @@ class AuthController extends Notifier<AuthState> {
     }
   }
 
+  Future<bool> switchCompany(int companyId) async {
+    state = state.copy(loading: true);
+    try {
+      final r = await ApiClient.instance.dio.post('/auth/switch-company', data: {
+        'company_id': companyId,
+      });
+
+      if (r.data != null && r.data is Map) {
+        await loadCurrentUser();
+      }
+      state = state.copy(loading: false);
+      return true;
+    } catch (e) {
+      state = state.copy(
+        loading: false,
+        error: 'Failed to switch company context.',
+      );
+      return false;
+    }
+  }
+
   Future<void> logout() async {
     try {
       await ApiClient.instance.dio.post('/auth/logout');
     } catch (_) {}
     await ApiClient.instance.clearToken();
     state = const AuthState();
+  }
+
+  void _applyUserData(Map<String, dynamic> u) {
+    Map<String, dynamic>? currComp;
+    if (u['current_company'] is Map) {
+      currComp = Map<String, dynamic>.from(u['current_company']);
+    }
+
+    final compList = <Map<String, dynamic>>[];
+    String userRole = 'owner';
+
+    if (u['companies'] is List) {
+      for (final c in u['companies']) {
+        if (c is Map) {
+          final cMap = Map<String, dynamic>.from(c);
+          compList.add(cMap);
+
+          if (currComp != null && cMap['id'] == currComp['id']) {
+            if (cMap['pivot'] is Map && cMap['pivot']['role'] != null) {
+              userRole = cMap['pivot']['role'].toString().toLowerCase();
+            }
+          }
+        }
+      }
+    }
+
+    state = state.copy(
+      loggedIn: true,
+      loading: false,
+      clearError: true,
+      user: u,
+      currentCompany: currComp,
+      companies: compList,
+      role: userRole,
+    );
+  }
+
+  Map<String, dynamic>? _extractUserData(dynamic data) {
+    if (data is Map) {
+      if (data['data'] is Map && data['data']['user'] is Map) {
+        return Map<String, dynamic>.from(data['data']['user']);
+      }
+      if (data['user'] is Map) {
+        return Map<String, dynamic>.from(data['user']);
+      }
+    }
+    return null;
   }
 
   String? _extractToken(dynamic data) {
@@ -141,7 +261,6 @@ class AuthController extends Notifier<AuthState> {
       if (res?.data != null && res!.data is Map) {
         final data = res.data as Map;
 
-        // 1. Check for detailed Laravel validation errors
         if (data['errors'] != null && data['errors'] is Map) {
           final errMap = data['errors'] as Map;
           final buffer = <String>[];
@@ -164,7 +283,6 @@ class AuthController extends Notifier<AuthState> {
           }
         }
 
-        // 2. Check for general message
         if (mainMessage == null && data['message'] != null) {
           final msg = data['message'].toString();
           if (msg.isNotEmpty && !msg.toLowerCase().contains('given data was invalid')) {
@@ -173,7 +291,6 @@ class AuthController extends Notifier<AuthState> {
         }
       }
 
-      // 3. Handle network status codes & exceptions
       if (mainMessage == null) {
         if (error.type == DioExceptionType.connectionTimeout ||
             error.type == DioExceptionType.receiveTimeout ||

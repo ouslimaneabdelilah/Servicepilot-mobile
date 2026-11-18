@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/api_client.dart';
 import '../../core/widgets/app_empty_state.dart';
+import '../../core/widgets/app_header.dart';
 
 class WorkOrdersScreen extends StatefulWidget {
   const WorkOrdersScreen({super.key});
@@ -61,12 +62,12 @@ class _WorkOrdersScreenState extends State<WorkOrdersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        title: const Text('Work Orders', style: TextStyle(fontWeight: FontWeight.w800)),
-        backgroundColor: Colors.white,
-        elevation: 0,
+      appBar: AppHeader(
+        title: 'Work Orders & Jobs',
+        subtitle: 'Field operations & technician progress',
+        showCompanySwitcher: true,
         actions: [
-          IconButton(icon: const Icon(Icons.refresh), onPressed: load),
+          IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: load),
         ],
       ),
       body: loading

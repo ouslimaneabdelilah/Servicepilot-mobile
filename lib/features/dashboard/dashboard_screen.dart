@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/api_client.dart';
+import '../../core/widgets/app_header.dart';
 import '../auth/auth_controller.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
@@ -41,20 +42,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        title: const Text('ServicePilot', style: TextStyle(fontWeight: FontWeight.w900)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            tooltip: 'Sign Out',
-            onPressed: () async {
-              await ref.read(authProvider.notifier).logout();
-              if (context.mounted) context.go('/login');
-            },
-            icon: const Icon(Icons.logout, color: Color(0xFF64748B)),
-          ),
-        ],
+      appBar: AppHeader(
+        title: 'Business Overview',
+        subtitle: '$companyName • $businessType',
+        showCompanySwitcher: true,
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),

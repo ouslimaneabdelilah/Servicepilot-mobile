@@ -34,5 +34,7 @@ class ApiClient {
 
   Future<void> saveToken(String token) => storage.write(key: 'token', value: token);
 
+  Future<String?> getToken() => storage.read(key: 'token');
+
   Future<void> clearToken() => storage.delete(key: 'token');
 }
