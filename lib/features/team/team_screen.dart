@@ -6,6 +6,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/app_avatar.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/app_dropdown.dart';
 import '../../core/widgets/app_empty_state.dart';
 import '../../core/widgets/app_header.dart';
 import '../../core/widgets/app_loading_button.dart';
@@ -100,17 +101,17 @@ class _TeamScreenState extends State<TeamScreen> {
                       ),
                     ),
                     const SizedBox(height: 14),
-                    DropdownButtonFormField<String>(
+                    AppDropdown<String>(
+                      label: 'Company Role *',
                       value: role,
-                      isExpanded: true,
-                      decoration: const InputDecoration(labelText: 'Company Role *'),
-                    items: const [
-                      DropdownMenuItem(value: 'technician', child: Text('Field Technician')),
-                      DropdownMenuItem(value: 'dispatcher', child: Text('Dispatcher / Coordinator')),
-                      DropdownMenuItem(value: 'admin', child: Text('Administrator')),
-                    ],
-                    onChanged: (val) => setModalState(() => role = val ?? 'technician'),
-                  ),
+                      prefixIcon: Icons.badge_outlined,
+                      options: const [
+                        AppDropdownOption(value: 'technician', label: 'Field Technician', subtitle: 'Executes jobs, fills checklists & logs hours'),
+                        AppDropdownOption(value: 'dispatcher', label: 'Dispatcher / Coordinator', subtitle: 'Schedules calls, assigns jobs & dispatches techs'),
+                        AppDropdownOption(value: 'admin', label: 'Administrator', subtitle: 'Full administrative access to financial records & team'),
+                      ],
+                      onChanged: (val) => setModalState(() => role = val ?? 'technician'),
+                    ),
                   const SizedBox(height: 22),
                   AppLoadingButton(
                     onPressed: isSaving

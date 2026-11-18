@@ -5,6 +5,7 @@ import '../../core/api_client.dart';
 import '../../core/constants/us_states.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/app_dropdown.dart';
 import '../../core/widgets/app_form_section.dart';
 import '../../core/widgets/app_header.dart';
 import '../../core/widgets/app_loading_button.dart';
@@ -233,25 +234,24 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
                 title: 'Account Settings',
                 icon: Icons.tune_rounded,
                 children: [
-                  DropdownButtonFormField<String>(
+                  AppDropdown<String>(
+                    label: 'Customer Type',
                     value: _customerType,
-                    isExpanded: true,
-                    decoration: const InputDecoration(labelText: 'Customer Type'),
-                    items: const [
-                      DropdownMenuItem(value: 'residential', child: Text('Residential Homeowner')),
-                      DropdownMenuItem(value: 'commercial', child: Text('Commercial Facility')),
+                    prefixIcon: Icons.badge_outlined,
+                    options: const [
+                      AppDropdownOption(value: 'residential', label: 'Residential Homeowner', subtitle: 'Single family home, apartment, or condo'),
+                      AppDropdownOption(value: 'commercial', label: 'Commercial Facility', subtitle: 'Office, restaurant, store, or warehouse'),
                     ],
                     onChanged: (v) => setState(() => _customerType = v ?? 'residential'),
                   ),
-                  const SizedBox(height: 14),
-                  DropdownButtonFormField<String>(
+                  AppDropdown<String>(
+                    label: 'Preferred Contact Method',
                     value: _preferredContact,
-                    isExpanded: true,
-                    decoration: const InputDecoration(labelText: 'Preferred Contact Method'),
-                    items: const [
-                      DropdownMenuItem(value: 'phone', child: Text('Phone Call')),
-                      DropdownMenuItem(value: 'sms', child: Text('Text Message (SMS)')),
-                      DropdownMenuItem(value: 'email', child: Text('Email')),
+                    prefixIcon: Icons.contact_phone_outlined,
+                    options: const [
+                      AppDropdownOption(value: 'phone', label: 'Phone Call', subtitle: 'Direct voice call for dispatch'),
+                      AppDropdownOption(value: 'sms', label: 'Text Message (SMS)', subtitle: 'Automated SMS updates & appointment reminders'),
+                      AppDropdownOption(value: 'email', label: 'Email', subtitle: 'Quotes, invoices & receipts via email'),
                     ],
                     onChanged: (v) => setState(() => _preferredContact = v ?? 'phone'),
                   ),
@@ -293,29 +293,49 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
                   ),
                   const SizedBox(height: 14),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: DropdownButtonFormField<String>(
+                        child: AppDropdown<String>(
+                          label: 'State *',
                           value: _stateCode,
-                          isExpanded: true,
-                          decoration: const InputDecoration(labelText: 'State *'),
-                          items: UsState.all.map((s) {
-                            return DropdownMenuItem(value: s.code, child: Text('${s.code} - ${s.name}'));
+                          options: UsState.all.map((s) {
+                            return AppDropdownOption(
+                              value: s.code,
+                              label: '${s.code} - ${s.name}',
+                            );
                           }).toList(),
                           onChanged: (v) => setState(() => _stateCode = v ?? 'FL'),
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: TextFormField(
-                          controller: _zipCtrl,
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(labelText: 'ZIP Code *', hintText: '33101'),
-                          validator: (v) {
-                            if (v == null || v.trim().isEmpty) return 'ZIP is required';
-                            if (v.trim().length < 5) return '5 Digits required';
-                            return null;
-                          },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'ZIP Code *',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF475569),
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            TextFormField(
+                              controller: _zipCtrl,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                hintText: '33101',
+                              ),
+                              validator: (v) {
+                                if (v == null || v.trim().isEmpty) return 'ZIP is required';
+                                if (v.trim().length < 5) return '5 Digits';
+                                return null;
+                              },
+                            ),
+                          ],
                         ),
                       ),
                     ],

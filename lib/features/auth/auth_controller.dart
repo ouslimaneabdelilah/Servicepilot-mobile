@@ -5,6 +5,7 @@ import '../../core/api_client.dart';
 final authProvider = NotifierProvider<AuthController, AuthState>(AuthController.new);
 
 class AuthState {
+  final bool isInitialized;
   final bool loggedIn;
   final bool loading;
   final String? error;
@@ -15,6 +16,7 @@ class AuthState {
   final String role;
 
   const AuthState({
+    this.isInitialized = false,
     this.loggedIn = false,
     this.loading = false,
     this.error,
@@ -30,6 +32,7 @@ class AuthState {
   bool get isTechnician => role == 'technician';
 
   AuthState copy({
+    bool? isInitialized,
     bool? loggedIn,
     bool? loading,
     String? error,
@@ -41,6 +44,7 @@ class AuthState {
     String? role,
   }) {
     return AuthState(
+      isInitialized: isInitialized ?? this.isInitialized,
       loggedIn: loggedIn ?? this.loggedIn,
       loading: loading ?? this.loading,
       error: clearError ? null : (error ?? this.error),
@@ -61,9 +65,19 @@ class AuthController extends Notifier<AuthState> {
   }
 
   Future<void> _restoreSession() async {
-    final token = await ApiClient.instance.getToken();
-    if (token != null && token.isNotEmpty) {
-      await loadCurrentUser();
+    try {
+      final token = await ApiClient.instance.getToken();
+      if (token != null && token.isNotEmpty) {
+        await loadCurrentUser();
+      } else {
+        state = state.copy(isInitialized: true, loggedIn: false);
+      }
+    } catch (_) {
+      state = state.copy(isInitialized: true, loggedIn: false);
+    } finally {
+      if (!state.isInitialized) {
+        state = state.copy(isInitialized: true);
+      }
     }
   }
 
@@ -79,8 +93,12 @@ class AuthController extends Notifier<AuthState> {
       final userData = _extractUserData(r.data);
       if (userData != null) {
         _applyUserData(userData);
+      } else {
+        state = state.copy(isInitialized: true, loggedIn: false);
       }
-    } catch (_) {}
+    } catch (_) {
+      state = state.copy(isInitialized: true, loggedIn: false);
+    }
   }
 
   Future<void> login(String email, String password) async {
@@ -190,7 +208,7 @@ class AuthController extends Notifier<AuthState> {
       await ApiClient.instance.dio.post('/auth/logout');
     } catch (_) {}
     await ApiClient.instance.clearToken();
-    state = const AuthState();
+    state = const AuthState(isInitialized: true, loggedIn: false);
   }
 
   void _applyUserData(Map<String, dynamic> u) {
@@ -218,6 +236,7 @@ class AuthController extends Notifier<AuthState> {
     }
 
     state = state.copy(
+      isInitialized: true,
       loggedIn: true,
       loading: false,
       clearError: true,

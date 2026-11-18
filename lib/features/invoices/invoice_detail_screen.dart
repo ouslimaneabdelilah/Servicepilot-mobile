@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../../core/api_client.dart';
+import '../../core/widgets/app_dropdown.dart';
 import '../../core/widgets/app_loading_button.dart';
 
 class InvoiceDetailScreen extends StatefulWidget {
@@ -65,15 +66,15 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
                   decoration: const InputDecoration(labelText: 'Payment Amount (\$)', border: OutlineInputBorder()),
                 ),
                 const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
+                AppDropdown<String>(
+                  label: 'Payment Method',
                   value: method,
-                  isExpanded: true,
-                  decoration: const InputDecoration(labelText: 'Payment Method', border: OutlineInputBorder()),
-                  items: const [
-                    DropdownMenuItem(value: 'card', child: Text('Credit / Debit Card')),
-                    DropdownMenuItem(value: 'cash', child: Text('Cash')),
-                    DropdownMenuItem(value: 'check', child: Text('Check')),
-                    DropdownMenuItem(value: 'bank_transfer', child: Text('Bank Transfer (ACH)')),
+                  prefixIcon: Icons.payment_outlined,
+                  options: const [
+                    AppDropdownOption(value: 'card', label: 'Credit / Debit Card', subtitle: 'Stripe, Square, or card terminal'),
+                    AppDropdownOption(value: 'check', label: 'Paper Check', subtitle: 'Customer physical check'),
+                    AppDropdownOption(value: 'bank_transfer', label: 'Bank Transfer (ACH)', subtitle: 'Direct deposit or wire transfer'),
+                    AppDropdownOption(value: 'cash', label: 'Cash', subtitle: 'Cash paid on site'),
                   ],
                   onChanged: (v) => setDialogState(() => method = v ?? 'card'),
                 ),

@@ -25,6 +25,7 @@ import '../features/service_requests/service_requests_screen.dart';
 import '../features/team/team_screen.dart';
 import '../features/work_orders/work_order_detail_screen.dart';
 import '../features/work_orders/work_orders_screen.dart';
+import '../features/splash/splash_screen.dart';
 import 'widgets/app_scaffold.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -35,21 +36,37 @@ final routerProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/login',
+    initialLocation: '/splash',
     redirect: (context, state) {
-      final isAuthRoute = state.matchedLocation == '/login' || state.matchedLocation == '/register';
+      final loc = state.matchedLocation;
+      final isAuthRoute = loc == '/login' || loc == '/register';
+      final isSplash = loc == '/splash';
 
-      if (!authState.loggedIn && !isAuthRoute) {
-        return '/login';
+      // 1. While stored credentials are being restored, stay on splash screen (NO login flash!)
+      if (!authState.isInitialized) {
+        return isSplash ? null : '/splash';
       }
 
-      if (authState.loggedIn && isAuthRoute) {
+      // 2. If session check completed and NOT logged in -> redirect to login
+      if (!authState.loggedIn) {
+        return isAuthRoute ? null : '/login';
+      }
+
+      // 3. If session check completed and logged in -> redirect straight to dashboard
+      if (authState.loggedIn && (isAuthRoute || isSplash)) {
         return '/dashboard';
       }
 
       return null;
     },
     routes: [
+      // Splash route (Startup & session restoration)
+      GoRoute(
+        path: '/splash',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, __) => const SplashScreen(),
+      ),
+
       // Auth routes (Full screen outside shell)
       GoRoute(
         path: '/login',

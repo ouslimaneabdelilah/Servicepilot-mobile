@@ -5,6 +5,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/app_dropdown.dart';
 import '../../core/widgets/app_empty_state.dart';
 import '../../core/widgets/app_header.dart';
 import '../../core/widgets/app_loading_button.dart';
@@ -103,20 +104,19 @@ class _ServicesScreenState extends State<ServicesScreen> {
                     ),
                     const SizedBox(height: 12),
                     if (_categories.isNotEmpty) ...[
-                      DropdownButtonFormField<int>(
+                      AppDropdown<int>(
+                        label: 'Trade Category *',
                         value: categoryId,
-                        isExpanded: true,
-                        decoration: const InputDecoration(labelText: 'Trade Category *'),
-                      items: _categories.map<DropdownMenuItem<int>>((c) {
-                        return DropdownMenuItem<int>(
-                          value: c['id'] as int,
-                          child: Text(c['name']?.toString() ?? ''),
-                        );
-                      }).toList(),
-                      onChanged: (val) => setModalState(() => categoryId = val),
-                    ),
-                    const SizedBox(height: 12),
-                  ],
+                        prefixIcon: Icons.category_outlined,
+                        options: _categories.map((c) {
+                          return AppDropdownOption<int>(
+                            value: c['id'] as int,
+                            label: c['name']?.toString() ?? '',
+                          );
+                        }).toList(),
+                        onChanged: (val) => setModalState(() => categoryId = val),
+                      ),
+                    ],
                   TextFormField(
                     controller: nameCtrl,
                     decoration: const InputDecoration(
@@ -135,29 +135,43 @@ class _ServicesScreenState extends State<ServicesScreen> {
                   ),
                   const SizedBox(height: 12),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: DropdownButtonFormField<String>(
+                        child: AppDropdown<String>(
+                          label: 'Pricing Type',
                           value: pricingType,
-                          isExpanded: true,
-                          decoration: const InputDecoration(labelText: 'Pricing Type'),
-                          items: const [
-                            DropdownMenuItem(value: 'flat_rate', child: Text('Flat Rate')),
-                            DropdownMenuItem(value: 'hourly', child: Text('Hourly Rate')),
+                          options: const [
+                            AppDropdownOption(value: 'flat_rate', label: 'Flat Rate', subtitle: 'Fixed project charge'),
+                            AppDropdownOption(value: 'hourly', label: 'Hourly Rate', subtitle: 'Billed per labor hour'),
                           ],
                           onChanged: (val) => setModalState(() => pricingType = val ?? 'flat_rate'),
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: TextFormField(
-                          controller: priceCtrl,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                          decoration: const InputDecoration(
-                            labelText: 'Base Price (\$)',
-                            prefixText: '\$ ',
-                            hintText: '150.00',
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Base Price (\$)',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF475569),
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            TextFormField(
+                              controller: priceCtrl,
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              decoration: const InputDecoration(
+                                prefixText: '\$ ',
+                                hintText: '150.00',
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],

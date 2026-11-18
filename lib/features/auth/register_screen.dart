@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/widgets/app_dropdown.dart';
 import '../../core/widgets/wave_dots_indicator.dart';
 import 'auth_controller.dart';
 
@@ -54,21 +55,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               _input(name, 'Full name'),
               _input(company, 'Business name'),
               _input(email, 'Email'),
-              DropdownButtonFormField<String>(
+              AppDropdown<String>(
+                label: 'Business Trade Type',
                 value: type,
-                isExpanded: true,
-                decoration: const InputDecoration(labelText: 'Business type'),
-                items: const [
-                  DropdownMenuItem(value: 'hvac', child: Text('HVAC')),
-                  DropdownMenuItem(value: 'plumbing', child: Text('Plumbing')),
-                  DropdownMenuItem(
-                    value: 'appliance_repair',
-                    child: Text('Appliance repair'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'general',
-                    child: Text('General services'),
-                  ),
+                prefixIcon: Icons.handyman_outlined,
+                options: const [
+                  AppDropdownOption(value: 'hvac', label: 'HVAC', subtitle: 'Heating, Ventilation & Air Conditioning'),
+                  AppDropdownOption(value: 'plumbing', label: 'Plumbing', subtitle: 'Pipes, Drains & Water Systems'),
+                  AppDropdownOption(value: 'appliance_repair', label: 'Appliance Repair', subtitle: 'Refrigerators, Washers & Dryers'),
+                  AppDropdownOption(value: 'general', label: 'General Services', subtitle: 'Multi-trade Field Service'),
                 ],
                 onChanged: (v) => setState(() => type = v ?? 'hvac'),
               ),
