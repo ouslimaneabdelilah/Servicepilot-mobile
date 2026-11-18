@@ -14,8 +14,7 @@ class ServicePilotApp extends ConsumerWidget {
       title: 'ServicePilot',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light,
       routerConfig: router,
     );
   }
