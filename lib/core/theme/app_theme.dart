@@ -89,16 +89,16 @@ class AppTheme {
         ),
       ),
 
-      // Button Themes (Native Mobile Styling: 54px thumb height, 16px radius, subtle tactile shadow)
+      // Button Themes (Sleek Compact Native Mobile: 44px height, 12px radius, refined 14.5px typography)
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          minimumSize: const Size.fromHeight(54),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.25),
-          elevation: 1,
-          shadowColor: AppColors.primary.withValues(alpha: 0.28),
+          minimumSize: const Size.fromHeight(44),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          textStyle: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w600, letterSpacing: 0.2),
+          elevation: 0,
+          shadowColor: AppColors.primary.withValues(alpha: 0.20),
         ),
       ),
 
@@ -106,10 +106,10 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primary,
           backgroundColor: Colors.white,
-          minimumSize: const Size.fromHeight(54),
-          side: const BorderSide(color: Color(0xFFCBD5E1), width: 1.5),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.25),
+          minimumSize: const Size.fromHeight(44),
+          side: const BorderSide(color: Color(0xFFE2E8F0), width: 1.2),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          textStyle: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w600, letterSpacing: 0.2),
         ),
       ),
 

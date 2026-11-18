@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/widgets/wave_dots_indicator.dart';
+import '../../core/widgets/app_loading_button.dart';
 import 'auth_controller.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -87,27 +87,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                       ),
                     const SizedBox(height: 22),
-                    FilledButton(
-                      onPressed: a.loading
-                          ? null
-                          : () {
-                              if (form.currentState!.validate()) {
-                                ref.read(authProvider.notifier).login(
-                                      email.text,
-                                      password.text,
-                                    );
-                              }
-                            },
-                      child: a.loading
-                          ? const SizedBox(
-                              height: 20,
-                              child: WaveDotsIndicator(
-                                color: Colors.white,
-                                size: 6.5,
-                                waveHeight: 5,
-                              ),
-                            )
-                          : const Text('Sign in'),
+                    AppLoadingButton(
+                      onPressed: () {
+                        if (form.currentState!.validate()) {
+                          ref.read(authProvider.notifier).login(
+                                email.text,
+                                password.text,
+                              );
+                        }
+                      },
+                      loading: a.loading,
+                      label: 'Sign In',
+                      icon: Icons.login_rounded,
+                      height: 44.0,
                     ),
                     TextButton(
                       onPressed: () => context.go('/register'),

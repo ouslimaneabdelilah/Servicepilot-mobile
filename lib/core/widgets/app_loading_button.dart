@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import 'wave_dots_indicator.dart';
 
-/// Enterprise native mobile button with tactile depth, rounded geometry,
-/// smooth micro-interactions, and integrated wave loading animation.
+/// Compact, sleek, professional native mobile button with clean icon integration.
+/// Designed with refined 44px height, 12px rounded geometry, and subtle depth.
 class AppLoadingButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool loading;
@@ -14,6 +14,7 @@ class AppLoadingButton extends StatelessWidget {
   final double height;
   final double borderRadius;
   final bool outlined;
+  final bool isIconOnly;
 
   const AppLoadingButton({
     super.key,
@@ -23,9 +24,10 @@ class AppLoadingButton extends StatelessWidget {
     this.icon,
     this.backgroundColor,
     this.textColor,
-    this.height = 54.0,
-    this.borderRadius = 16.0,
+    this.height = 44.0,
+    this.borderRadius = 12.0,
     this.outlined = false,
+    this.isIconOnly = false,
   });
 
   @override
@@ -37,17 +39,19 @@ class AppLoadingButton extends StatelessWidget {
     if (outlined) {
       return SizedBox(
         height: height,
+        width: isIconOnly ? height : null,
         child: OutlinedButton(
           onPressed: isInteractive ? onPressed : null,
           style: OutlinedButton.styleFrom(
             backgroundColor: Colors.white,
             foregroundColor: effectiveTextColor,
-            side: BorderSide(color: effectiveBg, width: 1.5),
+            side: BorderSide(color: effectiveBg, width: 1.2),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius),
             ),
             elevation: 0,
-            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.2),
+            padding: EdgeInsets.symmetric(horizontal: isIconOnly ? 0 : 16),
+            textStyle: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w600, letterSpacing: 0.2),
           ),
           child: _buildContent(effectiveTextColor),
         ),
@@ -56,14 +60,15 @@ class AppLoadingButton extends StatelessWidget {
 
     return Container(
       height: height,
+      width: isIconOnly ? height : null,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: isInteractive
             ? [
                 BoxShadow(
-                  color: effectiveBg.withValues(alpha: 0.28),
-                  blurRadius: 14,
-                  offset: const Offset(0, 5),
+                  color: effectiveBg.withValues(alpha: 0.20),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
                 ),
               ]
             : null,
@@ -74,10 +79,10 @@ class AppLoadingButton extends StatelessWidget {
         child: InkWell(
           onTap: isInteractive ? onPressed : null,
           borderRadius: BorderRadius.circular(borderRadius),
-          splashColor: Colors.white.withValues(alpha: 0.20),
-          highlightColor: Colors.white.withValues(alpha: 0.10),
+          splashColor: Colors.white.withValues(alpha: 0.18),
+          highlightColor: Colors.white.withValues(alpha: 0.08),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: isIconOnly ? 0 : 16),
             child: _buildContent(effectiveTextColor),
           ),
         ),
@@ -87,33 +92,35 @@ class AppLoadingButton extends StatelessWidget {
 
   Widget _buildContent(Color textCol) {
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 220),
+      duration: const Duration(milliseconds: 180),
       child: loading
           ? Center(
               key: const ValueKey('btn_loading'),
               child: WaveDotsIndicator(
                 color: textCol,
-                size: 8,
-                waveHeight: 6,
+                size: 6.5,
+                waveHeight: 4.5,
               ),
             )
           : Row(
               key: const ValueKey('btn_content'),
               mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: isIconOnly ? MainAxisSize.min : MainAxisSize.max,
               children: [
                 if (icon != null) ...[
-                  Icon(icon, size: 20, color: textCol),
-                  const SizedBox(width: 9),
+                  Icon(icon, size: 18, color: textCol),
+                  if (!isIconOnly && label.isNotEmpty) const SizedBox(width: 8),
                 ],
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.25,
-                    color: textCol,
+                if (!isIconOnly && label.isNotEmpty)
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.2,
+                      color: textCol,
+                    ),
                   ),
-                ),
               ],
             ),
     );

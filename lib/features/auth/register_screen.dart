@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/widgets/app_dropdown.dart';
-import '../../core/widgets/wave_dots_indicator.dart';
+import '../../core/widgets/app_loading_button.dart';
 import 'auth_controller.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -79,31 +79,23 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   ),
                 ),
               const SizedBox(height: 18),
-              FilledButton(
-                onPressed: a.loading
-                    ? null
-                    : () {
-                        if (form.currentState?.validate() ?? false) {
-                          ref.read(authProvider.notifier).register(
-                                name: name.text,
-                                email: email.text,
-                                password: password.text,
-                                confirmation: confirm.text,
-                                company: company.text,
-                                type: type,
-                              );
-                        }
-                      },
-                child: a.loading
-                    ? const SizedBox(
-                        height: 20,
-                        child: WaveDotsIndicator(
-                          color: Colors.white,
-                          size: 6.5,
-                          waveHeight: 5,
-                        ),
-                      )
-                    : const Text('Create account'),
+              AppLoadingButton(
+                onPressed: () {
+                  if (form.currentState?.validate() ?? false) {
+                    ref.read(authProvider.notifier).register(
+                          name: name.text,
+                          email: email.text,
+                          password: password.text,
+                          confirmation: confirm.text,
+                          company: company.text,
+                          type: type,
+                        );
+                  }
+                },
+                loading: a.loading,
+                label: 'Create Account',
+                icon: Icons.arrow_forward_rounded,
+                height: 44.0,
               ),
               TextButton(
                 onPressed: () => context.go('/login'),

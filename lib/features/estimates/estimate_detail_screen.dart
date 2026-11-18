@@ -167,22 +167,23 @@ class _EstimateDetailScreenState extends State<EstimateDetailScreen> {
                   children: [
                     if (status == 'draft')
                       Expanded(
-                        child: OutlinedButton(
+                        child: OutlinedButton.icon(
                           onPressed: actionLoading ? null : sendEstimate,
+                          icon: const Icon(Icons.send_outlined, size: 16),
+                          label: const Text('Mark Sent'),
                           style: OutlinedButton.styleFrom(
-                            minimumSize: const Size.fromHeight(50),
+                            minimumSize: const Size.fromHeight(44),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
-                          child: const Text('Mark Sent'),
                         ),
                       ),
-                    if (status == 'draft') const SizedBox(width: 12),
+                    if (status == 'draft') const SizedBox(width: 10),
                     Expanded(
                       flex: 2,
                       child: AppLoadingButton(
                         onPressed: approveEstimate,
                         loading: actionLoading,
-                        label: 'Approve & Create Work Order',
+                        label: 'Approve & Create Job',
                         icon: Icons.check_circle_outline,
                         backgroundColor: const Color(0xFF16A34A),
                       ),
