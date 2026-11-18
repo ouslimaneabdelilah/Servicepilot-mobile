@@ -135,30 +135,33 @@ class _EstimateFormScreenState extends State<EstimateFormScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      bottomNavigationBar: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Est. Total (Preview):', style: TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF64748B))),
-                Text(
-                  "\$${estimatedTotal.toStringAsFixed(2)}",
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Color(0xFF2457D6)),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            AppLoadingButton(
-              onPressed: save,
-              loading: saving,
-              label: 'Save & Generate Quote',
-              icon: Icons.check,
-            ),
-          ],
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Container(
+          color: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Est. Total (Preview):', style: TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF64748B))),
+                  Text(
+                    "\$${estimatedTotal.toStringAsFixed(2)}",
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Color(0xFF2457D6)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              AppLoadingButton(
+                onPressed: save,
+                loading: saving,
+                label: 'Save & Generate Quote',
+                icon: Icons.check,
+              ),
+            ],
+          ),
         ),
       ),
       body: loadingCustomers

@@ -117,19 +117,22 @@ class AppScaffold extends ConsumerWidget {
             ),
           ),
         ),
-        child: BottomNavigationBar(
-          currentIndex: currentIndex,
-          onTap: (idx) => _onNavigate(context, idx),
-          backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-          selectedItemColor: AppColors.primary,
-          unselectedItemColor: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
-          items: _navItems.map((item) {
-            return BottomNavigationBarItem(
-              icon: Icon(item.icon),
-              activeIcon: Icon(item.activeIcon),
-              label: item.label,
-            );
-          }).toList(),
+        child: SafeArea(
+          top: false,
+          child: BottomNavigationBar(
+            currentIndex: currentIndex,
+            onTap: (idx) => _onNavigate(context, idx),
+            backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+            selectedItemColor: AppColors.primary,
+            unselectedItemColor: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+            items: _navItems.map((item) {
+              return BottomNavigationBarItem(
+                icon: Icon(item.icon),
+                activeIcon: Icon(item.activeIcon),
+                label: item.label,
+              );
+            }).toList(),
+          ),
         ),
       ),
     );

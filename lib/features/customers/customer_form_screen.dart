@@ -235,6 +235,7 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
                 children: [
                   DropdownButtonFormField<String>(
                     value: _customerType,
+                    isExpanded: true,
                     decoration: const InputDecoration(labelText: 'Customer Type'),
                     items: const [
                       DropdownMenuItem(value: 'residential', child: Text('Residential Homeowner')),
@@ -245,6 +246,7 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
                   const SizedBox(height: 14),
                   DropdownButtonFormField<String>(
                     value: _preferredContact,
+                    isExpanded: true,
                     decoration: const InputDecoration(labelText: 'Preferred Contact Method'),
                     items: const [
                       DropdownMenuItem(value: 'phone', child: Text('Phone Call')),
@@ -280,38 +282,38 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
                     ),
                   ),
                   const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _cityCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'City *',
+                      hintText: 'Miami',
+                      prefixIcon: Icon(Icons.location_city_outlined, size: 20),
+                    ),
+                    validator: (v) => v == null || v.trim().isEmpty ? 'City is required' : null,
+                  ),
+                  const SizedBox(height: 14),
                   Row(
                     children: [
                       Expanded(
-                        flex: 3,
-                        child: TextFormField(
-                          controller: _cityCtrl,
-                          decoration: const InputDecoration(labelText: 'City *', hintText: 'Miami'),
-                          validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        flex: 2,
                         child: DropdownButtonFormField<String>(
                           value: _stateCode,
+                          isExpanded: true,
                           decoration: const InputDecoration(labelText: 'State *'),
                           items: UsState.all.map((s) {
-                            return DropdownMenuItem(value: s.code, child: Text(s.code));
+                            return DropdownMenuItem(value: s.code, child: Text('${s.code} - ${s.name}'));
                           }).toList(),
                           onChanged: (v) => setState(() => _stateCode = v ?? 'FL'),
                         ),
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 12),
                       Expanded(
-                        flex: 2,
                         child: TextFormField(
                           controller: _zipCtrl,
                           keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(labelText: 'ZIP *', hintText: '33101'),
+                          decoration: const InputDecoration(labelText: 'ZIP Code *', hintText: '33101'),
                           validator: (v) {
-                            if (v == null || v.trim().isEmpty) return 'Required';
-                            if (v.trim().length < 5) return '5 Digits';
+                            if (v == null || v.trim().isEmpty) return 'ZIP is required';
+                            if (v.trim().length < 5) return '5 Digits required';
                             return null;
                           },
                         ),
@@ -337,17 +339,24 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
                 ],
               ),
               const SizedBox(height: 24),
-
-              // Submit Button
-              AppLoadingButton(
-                onPressed: _save,
-                loading: _saving,
-                label: isEdit ? 'Save Changes' : 'Create Customer Record',
-                icon: Icons.check_circle_outline_rounded,
-                backgroundColor: AppColors.primary,
-              ),
-              const SizedBox(height: 32),
             ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            border: Border(top: BorderSide(color: Color(0xFFE2E8F0))),
+          ),
+          child: AppLoadingButton(
+            onPressed: _save,
+            loading: _saving,
+            label: isEdit ? 'Save Changes' : 'Create Customer Record',
+            icon: Icons.check_circle_outline_rounded,
+            backgroundColor: AppColors.primary,
           ),
         ),
       ),

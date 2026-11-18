@@ -131,8 +131,10 @@ class _SearchPickerSheetState<T> extends State<_SearchPickerSheet<T>> {
       maxChildSize: 0.92,
       expand: false,
       builder: (ctx, scrollCtrl) {
-        return Column(
-          children: [
+        return SafeArea(
+          top: false,
+          child: Column(
+            children: [
             // Handle bar
             Container(
               margin: const EdgeInsets.symmetric(vertical: 12),
@@ -220,7 +222,8 @@ class _SearchPickerSheetState<T> extends State<_SearchPickerSheet<T>> {
                     ),
             ),
           ],
-        );
+        ),
+      );
       },
     );
   }

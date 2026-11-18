@@ -107,14 +107,17 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
         subtitle: 'Log incoming repair call & dispatch',
         showBack: true,
       ),
-      bottomNavigationBar: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.all(16),
-        child: AppLoadingButton(
-          onPressed: save,
-          loading: saving,
-          label: 'Create Request',
-          icon: Icons.check,
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Container(
+          color: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: AppLoadingButton(
+            onPressed: save,
+            loading: saving,
+            label: 'Create Request',
+            icon: Icons.check,
+          ),
         ),
       ),
       body: loadingCustomers

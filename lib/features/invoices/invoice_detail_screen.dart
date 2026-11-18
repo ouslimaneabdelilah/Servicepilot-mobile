@@ -55,32 +55,35 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
       builder: (c) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
           title: const Text('Record Payment'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: amountController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(labelText: 'Payment Amount (\$)', border: OutlineInputBorder()),
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                value: method,
-                decoration: const InputDecoration(labelText: 'Payment Method', border: OutlineInputBorder()),
-                items: const [
-                  DropdownMenuItem(value: 'card', child: Text('Credit / Debit Card')),
-                  DropdownMenuItem(value: 'cash', child: Text('Cash')),
-                  DropdownMenuItem(value: 'check', child: Text('Check')),
-                  DropdownMenuItem(value: 'bank_transfer', child: Text('Bank Transfer (ACH)')),
-                ],
-                onChanged: (v) => setDialogState(() => method = v ?? 'card'),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: refController,
-                decoration: const InputDecoration(labelText: 'Reference / Check # (Optional)', border: OutlineInputBorder()),
-              ),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: amountController,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(labelText: 'Payment Amount (\$)', border: OutlineInputBorder()),
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  value: method,
+                  isExpanded: true,
+                  decoration: const InputDecoration(labelText: 'Payment Method', border: OutlineInputBorder()),
+                  items: const [
+                    DropdownMenuItem(value: 'card', child: Text('Credit / Debit Card')),
+                    DropdownMenuItem(value: 'cash', child: Text('Cash')),
+                    DropdownMenuItem(value: 'check', child: Text('Check')),
+                    DropdownMenuItem(value: 'bank_transfer', child: Text('Bank Transfer (ACH)')),
+                  ],
+                  onChanged: (v) => setDialogState(() => method = v ?? 'card'),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: refController,
+                  decoration: const InputDecoration(labelText: 'Reference / Check # (Optional)', border: OutlineInputBorder()),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancel')),
@@ -161,15 +164,18 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
         elevation: 0,
       ),
       bottomNavigationBar: canPay
-          ? Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(16),
-              child: AppLoadingButton(
-                onPressed: recordPayment,
-                loading: actionLoading,
-                label: "Record Payment (\$${balanceDue.toString()})",
-                icon: Icons.payments_outlined,
-                backgroundColor: const Color(0xFF16A34A),
+          ? SafeArea(
+              top: false,
+              child: Container(
+                color: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: AppLoadingButton(
+                  onPressed: recordPayment,
+                  loading: actionLoading,
+                  label: "Record Payment (\$${balanceDue.toString()})",
+                  icon: Icons.payments_outlined,
+                  backgroundColor: const Color(0xFF16A34A),
+                ),
               ),
             )
           : null,

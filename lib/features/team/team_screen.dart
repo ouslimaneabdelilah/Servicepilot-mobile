@@ -64,42 +64,46 @@ class _TeamScreenState extends State<TeamScreen> {
       ),
       builder: (ctx) => StatefulBuilder(
         builder: (context, setModalState) {
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-              left: 20,
-              right: 20,
-              top: 20,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Invite Staff Member', style: AppTypography.cardTitle.copyWith(fontSize: 18)),
-                      IconButton(
-                        icon: const Icon(Icons.close_rounded),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-                  TextFormField(
-                    controller: emailCtrl,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Staff Email Address *',
-                      hintText: 'technician@company.com',
-                      prefixIcon: Icon(Icons.mail_outline_rounded, size: 20),
+          final mediaQuery = MediaQuery.of(context);
+          return SafeArea(
+            top: false,
+            child: Padding(
+              padding: EdgeInsets.only(
+                bottom: mediaQuery.viewInsets.bottom + 16,
+                left: 20,
+                right: 20,
+                top: 20,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Invite Staff Member', style: AppTypography.cardTitle.copyWith(fontSize: 18)),
+                        IconButton(
+                          icon: const Icon(Icons.close_rounded),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 14),
-                  DropdownButtonFormField<String>(
-                    value: role,
-                    decoration: const InputDecoration(labelText: 'Company Role *'),
+                    const SizedBox(height: 14),
+                    TextFormField(
+                      controller: emailCtrl,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(
+                        labelText: 'Staff Email Address *',
+                        hintText: 'technician@company.com',
+                        prefixIcon: Icon(Icons.mail_outline_rounded, size: 20),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    DropdownButtonFormField<String>(
+                      value: role,
+                      isExpanded: true,
+                      decoration: const InputDecoration(labelText: 'Company Role *'),
                     items: const [
                       DropdownMenuItem(value: 'technician', child: Text('Field Technician')),
                       DropdownMenuItem(value: 'dispatcher', child: Text('Dispatcher / Coordinator')),
@@ -136,15 +140,16 @@ class _TeamScreenState extends State<TeamScreen> {
                     label: 'Send Workspace Invitation',
                     icon: Icons.send_rounded,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 12),
                 ],
               ),
             ),
-          );
-        },
-      ),
-    );
-  }
+          ),
+        );
+      },
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {

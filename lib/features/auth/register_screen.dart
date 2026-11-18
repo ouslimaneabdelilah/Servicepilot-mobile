@@ -56,6 +56,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               _input(email, 'Email'),
               DropdownButtonFormField<String>(
                 value: type,
+                isExpanded: true,
                 decoration: const InputDecoration(labelText: 'Business type'),
                 items: const [
                   DropdownMenuItem(value: 'hvac', child: Text('HVAC')),
@@ -113,6 +114,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 onPressed: () => context.go('/login'),
                 child: const Text('Already have an account? Sign in'),
               ),
+              const SizedBox(height: 24),
             ],
           ),
         ),

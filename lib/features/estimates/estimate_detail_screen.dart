@@ -68,17 +68,19 @@ class _EstimateDetailScreenState extends State<EstimateDetailScreen> {
       context: context,
       builder: (c) => AlertDialog(
         title: const Text('Approve Estimate'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Enter the customer name who approved this estimate. A work order will be automatically initialized.'),
-            const SizedBox(height: 14),
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: 'Customer Signer Name', hintText: 'e.g. John Doe'),
-            ),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Enter the customer name who approved this estimate. A work order will be automatically initialized.'),
+              const SizedBox(height: 14),
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Customer Signer Name', hintText: 'e.g. John Doe'),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancel')),
@@ -155,43 +157,46 @@ class _EstimateDetailScreenState extends State<EstimateDetailScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      bottomNavigationBar: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.all(16),
-        child: status != 'approved'
-            ? Row(
-                children: [
-                  if (status == 'draft')
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: actionLoading ? null : sendEstimate,
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: const Size.fromHeight(50),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Container(
+          color: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: status != 'approved'
+              ? Row(
+                  children: [
+                    if (status == 'draft')
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: actionLoading ? null : sendEstimate,
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(50),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          child: const Text('Mark Sent'),
                         ),
-                        child: const Text('Mark Sent'),
+                      ),
+                    if (status == 'draft') const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: AppLoadingButton(
+                        onPressed: approveEstimate,
+                        loading: actionLoading,
+                        label: 'Approve & Create Work Order',
+                        icon: Icons.check_circle_outline,
+                        backgroundColor: const Color(0xFF16A34A),
                       ),
                     ),
-                  if (status == 'draft') const SizedBox(width: 12),
-                  Expanded(
-                    flex: 2,
-                    child: AppLoadingButton(
-                      onPressed: approveEstimate,
-                      loading: actionLoading,
-                      label: 'Approve & Create Work Order',
-                      icon: Icons.check_circle_outline,
-                      backgroundColor: const Color(0xFF16A34A),
-                    ),
-                  ),
-                ],
-              )
-            : workOrder != null
-                ? AppLoadingButton(
-                    onPressed: () => context.push('/work-orders/${workOrder['id']}'),
-                    label: 'Open Linked Work Order',
-                    icon: Icons.construction_outlined,
-                  )
-                : const SizedBox.shrink(),
+                  ],
+                )
+              : workOrder != null
+                  ? AppLoadingButton(
+                      onPressed: () => context.push('/work-orders/${workOrder['id']}'),
+                      label: 'Open Linked Work Order',
+                      icon: Icons.construction_outlined,
+                    )
+                  : const SizedBox.shrink(),
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

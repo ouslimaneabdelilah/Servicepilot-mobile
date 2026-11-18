@@ -22,6 +22,7 @@ class AppDropdown<T> extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 14),
       child: DropdownButtonFormField<T>(
         value: value,
+        isExpanded: true,
         items: items,
         onChanged: onChanged,
         style: const TextStyle(fontSize: 15, color: Colors.black87, fontWeight: FontWeight.w500),

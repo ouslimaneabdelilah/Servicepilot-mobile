@@ -68,20 +68,22 @@ class _WorkOrderDetailScreenState extends State<WorkOrderDetailScreen> {
       context: context,
       builder: (c) => AlertDialog(
         title: const Text('Complete Work Order'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: notesController,
-              decoration: const InputDecoration(labelText: 'Technician Work Summary', hintText: 'Repairs performed, parts tested...'),
-              maxLines: 3,
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: signerController,
-              decoration: const InputDecoration(labelText: 'Customer Signer Name', hintText: 'Customer name who confirmed work'),
-            ),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: notesController,
+                decoration: const InputDecoration(labelText: 'Technician Work Summary', hintText: 'Repairs performed, parts tested...'),
+                maxLines: 3,
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: signerController,
+                decoration: const InputDecoration(labelText: 'Customer Signer Name', hintText: 'Customer name who confirmed work'),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancel')),
@@ -185,40 +187,43 @@ class _WorkOrderDetailScreenState extends State<WorkOrderDetailScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      bottomNavigationBar: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.all(16),
-        child: status == 'assigned'
-            ? AppLoadingButton(
-                onPressed: startJob,
-                loading: actionLoading,
-                label: 'Start Job (Clock In)',
-                icon: Icons.play_arrow,
-                backgroundColor: const Color(0xFF2563EB),
-              )
-            : status == 'in_progress'
-                ? AppLoadingButton(
-                    onPressed: completeJob,
-                    loading: actionLoading,
-                    label: 'Complete Work Order',
-                    icon: Icons.check_circle_outline,
-                    backgroundColor: const Color(0xFF16A34A),
-                  )
-                : Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFDEF7EC),
-                      borderRadius: BorderRadius.circular(12),
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Container(
+          color: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: status == 'assigned'
+              ? AppLoadingButton(
+                  onPressed: startJob,
+                  loading: actionLoading,
+                  label: 'Start Job (Clock In)',
+                  icon: Icons.play_arrow,
+                  backgroundColor: const Color(0xFF2563EB),
+                )
+              : status == 'in_progress'
+                  ? AppLoadingButton(
+                      onPressed: completeJob,
+                      loading: actionLoading,
+                      label: 'Complete Work Order',
+                      icon: Icons.check_circle_outline,
+                      backgroundColor: const Color(0xFF16A34A),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFDEF7EC),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.check_circle, color: Color(0xFF03543F)),
+                          SizedBox(width: 8),
+                          Text('Job Completed & Verified', style: TextStyle(color: Color(0xFF03543F), fontWeight: FontWeight.w700)),
+                        ],
+                      ),
                     ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.check_circle, color: Color(0xFF03543F)),
-                        SizedBox(width: 8),
-                        Text('Job Completed & Verified', style: TextStyle(color: Color(0xFF03543F), fontWeight: FontWeight.w700)),
-                      ],
-                    ),
-                  ),
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

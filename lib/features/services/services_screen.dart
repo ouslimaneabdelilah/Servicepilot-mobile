@@ -76,33 +76,37 @@ class _ServicesScreenState extends State<ServicesScreen> {
       ),
       builder: (ctx) => StatefulBuilder(
         builder: (context, setModalState) {
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-              left: 20,
-              right: 20,
-              top: 20,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Add New Service', style: AppTypography.cardTitle.copyWith(fontSize: 18)),
-                      IconButton(
-                        icon: const Icon(Icons.close_rounded),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  if (_categories.isNotEmpty) ...[
-                    DropdownButtonFormField<int>(
-                      value: categoryId,
-                      decoration: const InputDecoration(labelText: 'Trade Category *'),
+          final mediaQuery = MediaQuery.of(context);
+          return SafeArea(
+            top: false,
+            child: Padding(
+              padding: EdgeInsets.only(
+                bottom: mediaQuery.viewInsets.bottom + 16,
+                left: 20,
+                right: 20,
+                top: 20,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Add New Service', style: AppTypography.cardTitle.copyWith(fontSize: 18)),
+                        IconButton(
+                          icon: const Icon(Icons.close_rounded),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    if (_categories.isNotEmpty) ...[
+                      DropdownButtonFormField<int>(
+                        value: categoryId,
+                        isExpanded: true,
+                        decoration: const InputDecoration(labelText: 'Trade Category *'),
                       items: _categories.map<DropdownMenuItem<int>>((c) {
                         return DropdownMenuItem<int>(
                           value: c['id'] as int,
@@ -135,6 +139,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                       Expanded(
                         child: DropdownButtonFormField<String>(
                           value: pricingType,
+                          isExpanded: true,
                           decoration: const InputDecoration(labelText: 'Pricing Type'),
                           items: const [
                             DropdownMenuItem(value: 'flat_rate', child: Text('Flat Rate')),
@@ -199,15 +204,16 @@ class _ServicesScreenState extends State<ServicesScreen> {
                     label: 'Save Service',
                     icon: Icons.check_circle_outline_rounded,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 12),
                 ],
               ),
             ),
-          );
-        },
-      ),
-    );
-  }
+          ),
+        );
+      },
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
