@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/widgets/app_loading_button.dart';
+import '../../core/widgets/wave_dots_indicator.dart';
 import 'auth_controller.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -12,322 +12,106 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _obscurePassword = true;
+  final form = GlobalKey<FormState>();
+  final email = TextEditingController();
+  final password = TextEditingController();
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    email.dispose();
+    password.dispose();
     super.dispose();
-  }
-
-  void _submit() {
-    ref.read(authProvider.notifier).clearError();
-    if (_formKey.currentState?.validate() ?? false) {
-      ref.read(authProvider.notifier).login(
-            _emailController.text,
-            _passwordController.text,
-          );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final auth = ref.watch(authProvider);
+    final a = ref.watch(authProvider);
 
-    ref.listen(authProvider, (prev, next) {
-      if (next.loggedIn) {
+    ref.listen(authProvider, (p, n) {
+      if (n.loggedIn) {
         context.go('/dashboard');
       }
     });
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            padding: const EdgeInsets.all(24),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 440),
               child: Form(
-                key: _formKey,
+                key: form,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Brand Logo
-                    Center(
-                      child: Container(
-                        width: 72,
-                        height: 72,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2457D6).withAlpha(20),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: const Color(0xFF2457D6).withAlpha(40),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: const Icon(
-                          Icons.home_repair_service_rounded,
-                          size: 38,
-                          color: Color(0xFF2457D6),
-                        ),
-                      ),
+                    const Icon(
+                      Icons.home_repair_service_rounded,
+                      size: 54,
+                      color: Color(0xFF2457D6),
                     ),
-                    const SizedBox(height: 24),
-
-                    // Header
+                    const SizedBox(height: 22),
                     const Text(
                       'Welcome back',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF0F172A),
-                        letterSpacing: -0.5,
-                      ),
+                      style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'Sign in to manage your dispatching, jobs & invoices',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF64748B),
-                        height: 1.4,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-
-                    // Error Alert Banner
-                    if (auth.error != null) ...[
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 20),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFEF2F2),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: const Color(0xFFFCA5A5)),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(
-                              Icons.error_outline_rounded,
-                              color: Color(0xFFDC2626),
-                              size: 20,
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                auth.error!,
-                                style: const TextStyle(
-                                  color: Color(0xFF991B1B),
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.35,
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () => ref.read(authProvider.notifier).clearError(),
-                              child: const Icon(
-                                Icons.close_rounded,
-                                size: 18,
-                                color: Color(0xFF991B1B),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-
-                    // Email Field
+                    const Text('Sign in to manage your service business.'),
+                    const SizedBox(height: 28),
                     TextFormField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
+                      controller: email,
+                      decoration: const InputDecoration(
                         labelText: 'Email address',
-                        hintText: 'name@company.com',
-                        prefixIcon: const Icon(Icons.mail_outline_rounded, size: 20),
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: Color(0xFF2457D6), width: 2),
-                        ),
+                        prefixIcon: Icon(Icons.mail_outline),
                       ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please enter your email address.';
-                        }
-                        if (!value.contains('@') || !value.contains('.')) {
-                          return 'Please enter a valid email address.';
-                        }
-                        return null;
-                      },
+                      validator: (v) =>
+                          v == null || !v.contains('@') ? 'Enter a valid email.' : null,
                     ),
-                    const SizedBox(height: 16),
-
-                    // Password Field
+                    const SizedBox(height: 14),
                     TextFormField(
-                      controller: _passwordController,
-                      obscureText: _obscurePassword,
-                      textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (_) => _submit(),
-                      decoration: InputDecoration(
+                      controller: password,
+                      obscureText: true,
+                      decoration: const InputDecoration(
                         labelText: 'Password',
-                        hintText: '••••••••••',
-                        prefixIcon: const Icon(Icons.lock_outline_rounded, size: 20),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
-                            size: 20,
-                            color: const Color(0xFF64748B),
-                          ),
-                          onPressed: () {
-                            setState(() => _obscurePassword = !_obscurePassword);
-                          },
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: Color(0xFF2457D6), width: 2),
+                        prefixIcon: Icon(Icons.lock_outline),
+                      ),
+                      validator: (v) =>
+                          v == null || v.isEmpty ? 'Password required.' : null,
+                    ),
+                    if (a.error != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: Text(
+                          a.error!,
+                          style: const TextStyle(color: Colors.red, fontWeight: FontWeight.w500),
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password.';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Sign In Button with Wave Dots Loader
-                    AppLoadingButton(
-                      onPressed: _submit,
-                      loading: auth.loading,
-                      label: 'Sign in to workspace',
-                      icon: Icons.arrow_forward_rounded,
-                      backgroundColor: const Color(0xFF2457D6),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Register Link
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          "Don't have an account? ",
-                          style: TextStyle(color: Color(0xFF64748B), fontSize: 14),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            ref.read(authProvider.notifier).clearError();
-                            context.go('/register');
-                          },
-                          child: const Text(
-                            'Create workspace',
-                            style: TextStyle(
-                              color: Color(0xFF2457D6),
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 32),
-
-                    // Quick Demo Login Chip
-                    Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFFE2E8F0)),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Row(
-                            children: [
-                              Icon(Icons.flash_on_rounded, size: 16, color: Color(0xFFF59E0B)),
-                              SizedBox(width: 6),
-                              Text(
-                                'Quick Demo Sign In',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF475569),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          InkWell(
-                            onTap: () {
-                              _emailController.text = 'owner@apexclimate.com';
-                              _passwordController.text = 'Secret12345!';
-                              _submit();
+                    const SizedBox(height: 22),
+                    FilledButton(
+                      onPressed: a.loading
+                          ? null
+                          : () {
+                              if (form.currentState!.validate()) {
+                                ref.read(authProvider.notifier).login(
+                                      email.text,
+                                      password.text,
+                                    );
+                              }
                             },
-                            borderRadius: BorderRadius.circular(8),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF1F5F9),
-                                borderRadius: BorderRadius.circular(8),
+                      child: a.loading
+                          ? const SizedBox(
+                              height: 20,
+                              child: WaveDotsIndicator(
+                                color: Colors.white,
+                                size: 6.5,
+                                waveHeight: 5,
                               ),
-                              child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'owner@apexclimate.com',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFF0F172A),
-                                    ),
-                                  ),
-                                  Text(
-                                    'Tap to fill & sign in →',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: Color(0xFF2457D6),
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                            )
+                          : const Text('Sign in'),
+                    ),
+                    TextButton(
+                      onPressed: () => context.go('/register'),
+                      child: const Text('Create an account'),
                     ),
                   ],
                 ),
